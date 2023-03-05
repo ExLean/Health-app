@@ -1,4 +1,4 @@
-package com.example.health_app.database;
+package com.example.health_app;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -48,7 +48,7 @@ public abstract class AsyncTaskExecutorService < Params, Progress, Result > {
         // Override this method whereever you want update a progress result
     }
 
-    // used for push progress resport to UI
+    // used for push progress report to UI
     public void publishProgress(@NotNull Progress value) {
         getHandler().post(() -> onProgressUpdate(value));
     }

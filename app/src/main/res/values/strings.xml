@@ -3,4 +3,6 @@
     <string name="psw_hint">Slaptažodis</string>
     <string name="usr_hint">Slapyvardis</string>
     <string name="login_text">Prisijungti</string>
+    <string name="url">http://192.168.8.107/</string>
+    <string name="login">login_user.php</string>
 </resources>
