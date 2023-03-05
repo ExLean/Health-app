@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.health_app.ds.User;
+import com.google.gson.Gson;
+
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -17,7 +20,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    String url = "http://192.168.8.107/login_user.php";
+    String url = "http://192.168.73.6/login_user.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +65,12 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     String result = response.body().string();
                     if (result.equalsIgnoreCase("login")) {
+                        User user = new User(user_name, user_pass);
+
                         Intent i = new Intent(MainActivity.this, Dashboard.class);
-                        i.putExtra("username", user_name);
-                        i.putExtra("password", user_pass);
+//                        i.putExtra("username", user_name);
+//                        i.putExtra("password", user_pass);
+                        i.putExtra("json_user", (new Gson()).toJson(user));
                         startActivity(i);
                         finish();
                     } else {
