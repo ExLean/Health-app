@@ -9,27 +9,32 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.health_app.ds.User;
+import com.example.health_app.model.User;
+import com.example.health_app.retrofit.RetrofitService;
+import com.example.health_app.retrofit.UserApi;
 import com.google.gson.Gson;
 
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-
-    String url = "http://192.168.73.6/login_user.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText username_field = findViewById(R.id.usr_text_field);
-        EditText password_field = findViewById(R.id.psw_text_field);
+        EditText username_field = findViewById(R.id.username_login_textField);
+        EditText password_field = findViewById(R.id.password_login_textField);
         Button login = findViewById(R.id.login_btn);
+        Button goToRegister = findViewById(R.id.goToRegister_btn);
+
+        RetrofitService retrofitService = new RetrofitService();
+        UserApi userApi = retrofitService.getRetrofit().create(UserApi.class);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,62 +42,37 @@ public class MainActivity extends AppCompatActivity {
                 String username = username_field.getText().toString();
                 String password = password_field.getText().toString();
 
-                new LoginUser().execute(username, password);
+                User user = new User();
+                user.setUsername(username);
+                user.setPassword(password);
+
+                userApi.getUserByLoginData(user)
+                        .enqueue(new Callback<User>() {
+                            @Override
+                            public void onResponse(Call<User> call, Response<User> response) {
+                                Toast.makeText(MainActivity.this, "Prisijungta", Toast.LENGTH_SHORT).show();
+
+                                Intent i = new Intent(MainActivity.this, MenuActivity.class);
+                                i.putExtra("json_user", (new Gson()).toJson(response.body()));
+                                startActivity(i);
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailure(Call<User> call, Throwable t) {
+                                Toast.makeText(MainActivity.this, "Prisijungti nepavyko", Toast.LENGTH_SHORT).show();
+                                Logger.getLogger(MainActivity.class.getName()).log(Level.SEVERE, "Error occurred trying to login", t);
+                            }
+                        });
             }
         });
-    }
 
-    public class LoginUser extends AsyncTaskExecutorService<String, Void, String> {
-        @Override
-        protected String doInBackground(String... strings) {
-            String user_name = strings[0];
-            String user_pass = strings[1];
-
-            OkHttpClient client = new OkHttpClient();
-            RequestBody formBody = new FormBody.Builder()
-                    .add("user_name", user_name)
-                    .add("user_password", user_pass)
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(formBody)
-                    .build();
-
-            Response response;
-            try{
-                response = client.newCall(request).execute();
-                if (response.isSuccessful()) {
-                    String result = response.body().string();
-                    if (result.equalsIgnoreCase("login")) {
-                        User user = new User(user_name, user_pass);
-
-                        Intent i = new Intent(MainActivity.this, Dashboard.class);
-//                        i.putExtra("username", user_name);
-//                        i.putExtra("password", user_pass);
-                        i.putExtra("json_user", (new Gson()).toJson(user));
-                        startActivity(i);
-                        finish();
-                    } else {
-                        showToast("Wrong Username or password");
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-        }
-    }
-
-    public void showToast(final String Text) {
-        this.runOnUiThread(new Runnable() {
+        goToRegister.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                Toast.makeText(MainActivity.this, Text, Toast.LENGTH_LONG).show();
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, RegisterActivity.class);
+                startActivity(i);
+                finish();
             }
         });
     }

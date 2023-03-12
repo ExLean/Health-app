@@ -1,24 +1,17 @@
-package com.example.health_app.ds;
+package com.example.health_app.model;
 
 import java.util.Date;
 
 public class User {
+
     private int id;
     private String username;
     private String password;
     private String email;
+    private Date birthday;
     private int weight;
     private int height;
-    private Date birthday;
-    private String calorieDeficit;
-
-    public User() {
-    }
-
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+    private int calorieDeficit;
 
     public int getId() {
         return id;
@@ -52,6 +45,14 @@ public class User {
         this.email = email;
     }
 
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
     public int getWeight() {
         return weight;
     }
@@ -68,19 +69,25 @@ public class User {
         this.height = height;
     }
 
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public String getCalorieDeficit() {
+    public int getCalorieDeficit() {
         return calorieDeficit;
     }
 
-    public void setCalorieDeficit(String calorieDeficit) {
+    public void setCalorieDeficit(int calorieDeficit) {
         this.calorieDeficit = calorieDeficit;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", birthday=" + birthday +
+                ", weight=" + weight +
+                ", height=" + height +
+                ", calorieDeficit=" + calorieDeficit +
+                '}';
     }
 }

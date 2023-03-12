@@ -5,28 +5,28 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.health_app.ds.User;
+import com.example.health_app.model.User;
 import com.google.gson.Gson;
 
-public class Dashboard extends AppCompatActivity {
+public class MenuActivity extends AppCompatActivity {
+
+    User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dashboard);
+        setContentView(R.layout.activity_menu);
 
         Bundle extras = getIntent().getExtras();
-        User user = null;
         if (extras != null) {
             String jsonUser = extras.getString("json_user");
-            user = new Gson().fromJson(jsonUser, User.class);
+            currentUser = new Gson().fromJson(jsonUser, User.class);
         }
 
         TextView textView = findViewById(R.id.textView);
 
-        String text = "User logged in: " + user.getUsername() + "\n" +
-                "user's pass is:" + user.getPassword();
+        String userInfo = currentUser.toString();
 
-        textView.setText(text);
+        textView.setText(userInfo);
     }
 }
